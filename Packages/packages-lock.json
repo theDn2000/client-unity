@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.clockworklabs.spacetimedbsdk": {
+      "version": "https://github.com/clockworklabs/com.clockworklabs.spacetimedbsdk.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "73354227b3260e7abeb8ff163f1a48713c100bce"
+    },
     "com.unity.burst": {
       "version": "1.8.21",
       "depth": 2,
