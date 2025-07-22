@@ -16,26 +16,50 @@ namespace SpacetimeDB.Types
     public sealed partial class Entity
     {
         [DataMember(Name = "entity_id")]
-        public uint EntityId;
-        [DataMember(Name = "position")]
-        public DbVector2 Position;
-        [DataMember(Name = "life")]
-        public uint Life;
+        public int EntityId;
+        [DataMember(Name = "pos_x")]
+        public float PosX;
+        [DataMember(Name = "pos_y")]
+        public float PosY;
+        [DataMember(Name = "pos_z")]
+        public float PosZ;
+        [DataMember(Name = "rot_y")]
+        public float RotY;
+        [DataMember(Name = "health")]
+        public uint Health;
+        [DataMember(Name = "mana")]
+        public uint Mana;
+        [DataMember(Name = "entity_type")]
+        public string EntityType;
+        [DataMember(Name = "created_at")]
+        public ulong CreatedAt;
 
         public Entity(
-            uint EntityId,
-            DbVector2 Position,
-            uint Life
+            int EntityId,
+            float PosX,
+            float PosY,
+            float PosZ,
+            float RotY,
+            uint Health,
+            uint Mana,
+            string EntityType,
+            ulong CreatedAt
         )
         {
             this.EntityId = EntityId;
-            this.Position = Position;
-            this.Life = Life;
+            this.PosX = PosX;
+            this.PosY = PosY;
+            this.PosZ = PosZ;
+            this.RotY = RotY;
+            this.Health = Health;
+            this.Mana = Mana;
+            this.EntityType = EntityType;
+            this.CreatedAt = CreatedAt;
         }
 
         public Entity()
         {
-            this.Position = new();
+            this.EntityType = "";
         }
     }
 }

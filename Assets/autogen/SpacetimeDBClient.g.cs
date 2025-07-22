@@ -23,11 +23,12 @@ namespace SpacetimeDB.Types
     {
         public RemoteTables(DbConnection conn)
         {
+            AddTable(Account = new(conn));
             AddTable(Character = new(conn));
-            AddTable(Config = new(conn));
             AddTable(Entity = new(conn));
-            AddTable(Npc = new(conn));
-            AddTable(Player = new(conn));
+            AddTable(EntityCharacter = new(conn));
+            AddTable(Session = new(conn));
+            AddTable(UserNotification = new(conn));
         }
     }
 
@@ -472,6 +473,14 @@ namespace SpacetimeDB.Types
             return update.ReducerCall.ReducerName switch
             {
                 "Connect" => BSATNHelpers.Decode<Reducer.Connect>(encodedArgs),
+                "CreateCharacter" => BSATNHelpers.Decode<Reducer.CreateCharacter>(encodedArgs),
+                "CreateEntity" => BSATNHelpers.Decode<Reducer.CreateEntity>(encodedArgs),
+                "DeleteAccount" => BSATNHelpers.Decode<Reducer.DeleteAccount>(encodedArgs),
+                "DeleteCharacter" => BSATNHelpers.Decode<Reducer.DeleteCharacter>(encodedArgs),
+                "Login" => BSATNHelpers.Decode<Reducer.Login>(encodedArgs),
+                "Logout" => BSATNHelpers.Decode<Reducer.Logout>(encodedArgs),
+                "Register" => BSATNHelpers.Decode<Reducer.Register>(encodedArgs),
+                "SelectCharacter" => BSATNHelpers.Decode<Reducer.SelectCharacter>(encodedArgs),
                 var reducer => throw new ArgumentOutOfRangeException("Reducer", $"Unknown reducer {reducer}")
             };
         }
@@ -494,6 +503,14 @@ namespace SpacetimeDB.Types
             return reducer switch
             {
                 Reducer.Connect args => Reducers.InvokeConnect(eventContext, args),
+                Reducer.CreateCharacter args => Reducers.InvokeCreateCharacter(eventContext, args),
+                Reducer.CreateEntity args => Reducers.InvokeCreateEntity(eventContext, args),
+                Reducer.DeleteAccount args => Reducers.InvokeDeleteAccount(eventContext, args),
+                Reducer.DeleteCharacter args => Reducers.InvokeDeleteCharacter(eventContext, args),
+                Reducer.Login args => Reducers.InvokeLogin(eventContext, args),
+                Reducer.Logout args => Reducers.InvokeLogout(eventContext, args),
+                Reducer.Register args => Reducers.InvokeRegister(eventContext, args),
+                Reducer.SelectCharacter args => Reducers.InvokeSelectCharacter(eventContext, args),
                 _ => throw new ArgumentOutOfRangeException("Reducer", $"Unknown reducer {reducer}")
             };
         }

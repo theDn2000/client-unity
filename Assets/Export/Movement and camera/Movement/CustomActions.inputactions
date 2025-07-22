@@ -1,0 +1,35 @@
+{
+    "version": 1,
+    "name": "CustomActions",
+    "maps": [
+        {
+            "name": "Main",
+            "id": "a6f81f2d-424b-4bec-8f64-d2ae9caa76ce",
+            "actions": [
+                {
+                    "name": "Move",
+                    "type": "Button",
+                    "id": "46e1d471-ee15-4947-9544-4ae7498720f9",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "b7140069-bc33-4d13-ade9-58f726b34fdf",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "Hold(duration=0.0001,pressPoint=0.0001)",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

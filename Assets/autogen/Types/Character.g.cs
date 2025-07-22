@@ -15,27 +15,69 @@ namespace SpacetimeDB.Types
     [DataContract]
     public sealed partial class Character
     {
+        [DataMember(Name = "character_id")]
+        public uint CharacterId;
+        [DataMember(Name = "account_id")]
+        public uint AccountId;
         [DataMember(Name = "entity_id")]
         public uint EntityId;
-        [DataMember(Name = "player_id")]
-        public uint PlayerId;
-        [DataMember(Name = "direction")]
-        public DbVector2 Direction;
+        [DataMember(Name = "name")]
+        public string Name;
+        [DataMember(Name = "created_at")]
+        public ulong CreatedAt;
+        [DataMember(Name = "class_name")]
+        public string ClassName;
+        [DataMember(Name = "race")]
+        public string Race;
+        [DataMember(Name = "level")]
+        public uint Level;
+        [DataMember(Name = "experience")]
+        public uint Experience;
+        [DataMember(Name = "strength")]
+        public uint Strength;
+        [DataMember(Name = "intelligence")]
+        public uint Intelligence;
+        [DataMember(Name = "agility")]
+        public uint Agility;
+        [DataMember(Name = "endurance")]
+        public uint Endurance;
 
         public Character(
+            uint CharacterId,
+            uint AccountId,
             uint EntityId,
-            uint PlayerId,
-            DbVector2 Direction
+            string Name,
+            ulong CreatedAt,
+            string ClassName,
+            string Race,
+            uint Level,
+            uint Experience,
+            uint Strength,
+            uint Intelligence,
+            uint Agility,
+            uint Endurance
         )
         {
+            this.CharacterId = CharacterId;
+            this.AccountId = AccountId;
             this.EntityId = EntityId;
-            this.PlayerId = PlayerId;
-            this.Direction = Direction;
+            this.Name = Name;
+            this.CreatedAt = CreatedAt;
+            this.ClassName = ClassName;
+            this.Race = Race;
+            this.Level = Level;
+            this.Experience = Experience;
+            this.Strength = Strength;
+            this.Intelligence = Intelligence;
+            this.Agility = Agility;
+            this.Endurance = Endurance;
         }
 
         public Character()
         {
-            this.Direction = new();
+            this.Name = "";
+            this.ClassName = "";
+            this.Race = "";
         }
     }
 }
