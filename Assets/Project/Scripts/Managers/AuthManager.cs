@@ -22,8 +22,6 @@ public class AuthManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            // Ensure that there is only one instance of AuthManager
-            DontDestroyOnLoad(gameObject);
         }
         else
         {
