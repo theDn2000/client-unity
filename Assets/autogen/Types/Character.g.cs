@@ -21,6 +21,8 @@ namespace SpacetimeDB.Types
         public uint AccountId;
         [DataMember(Name = "entity_id")]
         public uint EntityId;
+        [DataMember(Name = "username")]
+        public string Username;
         [DataMember(Name = "name")]
         public string Name;
         [DataMember(Name = "created_at")]
@@ -46,6 +48,7 @@ namespace SpacetimeDB.Types
             uint CharacterId,
             uint AccountId,
             uint EntityId,
+            string Username,
             string Name,
             ulong CreatedAt,
             string ClassName,
@@ -61,6 +64,7 @@ namespace SpacetimeDB.Types
             this.CharacterId = CharacterId;
             this.AccountId = AccountId;
             this.EntityId = EntityId;
+            this.Username = Username;
             this.Name = Name;
             this.CreatedAt = CreatedAt;
             this.ClassName = ClassName;
@@ -75,6 +79,7 @@ namespace SpacetimeDB.Types
 
         public Character()
         {
+            this.Username = "";
             this.Name = "";
             this.ClassName = "";
             this.Race = "";

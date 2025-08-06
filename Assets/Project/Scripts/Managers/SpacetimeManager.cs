@@ -15,6 +15,7 @@ public class SpacetimeManager : MonoBehaviour
     // Define some methods to handle connection events
     public static event Action OnConnected;
     public static event Action OnSubscriptionApplied;
+    public static event Action OnCharacterSubscriptionApplied;
 
     // Define a singleton instance of SpacetimeManager
     public static SpacetimeManager Instance { get; private set; }
@@ -22,6 +23,9 @@ public class SpacetimeManager : MonoBehaviour
     // Define Identity and DbConnection properties
     public static Identity LocalIdentity { get; private set; }
     public DbConnection Conn { get; private set; }
+
+    // Define account properties
+    public string AccountId { get; private set; }
 
 
 
@@ -40,7 +44,62 @@ public class SpacetimeManager : MonoBehaviour
 
     }
 
-    // Connect function
+
+
+
+
+
+
+
+    // HANDLERS
+    // HandleConnect is called when we connect to SpacetimeDB and recieve our client identity
+    void HandleConnect(DbConnection _conn, Identity identity, string token)
+    {
+        Debug.Log("🟢 Connected to SpacetimeDB");
+        AuthToken.SaveToken(token);
+        LocalIdentity = identity;
+
+        // Invoke the OnConnected event
+        OnConnected?.Invoke();
+
+        // Subscribe to the login tables: account and userNotification
+        // Debug.Log("SpacetimeManager: Subscribing to login tables...");
+        // Conn.SubscriptionBuilder()
+        //     .OnApplied(HandleSubscriptionApplied)
+        //     .Subscribe(new string[] {
+        //         "SELECT * FROM account", "SELECT * FROM  userNotification where identity = '" + LocalIdentity + "'"
+        //     });
+    }
+
+    void HandleConnectError(Exception ex)
+    {
+        Debug.LogError($"Connection error: {ex}");
+    }
+
+    void HandleDisconnect(DbConnection _conn, Exception ex)
+    {
+
+        Debug.Log("Disconnected.");
+        if (ex != null)
+        {
+            Debug.LogException(ex);
+        }
+    }
+
+    private void HandleSubscriptionApplied(SubscriptionEventContext ctx)
+    {
+        Debug.Log("🟢 Subscription applied!");
+        OnSubscriptionApplied?.Invoke();
+    }
+
+
+
+    // FUNCTIONS
+    public bool IsConnected()
+    {
+        return Instance != null && Conn.IsActive;
+    }
+
     public async Task Connect()
     {
         // Connect to the SpacetimeDB server
@@ -72,51 +131,6 @@ public class SpacetimeManager : MonoBehaviour
         }
     }
 
-    // HandleConnect is called when we connect to SpacetimeDB and recieve our client identity
-    void HandleConnect(DbConnection _conn, Identity identity, string token)
-    {
-        Debug.Log("🟢 Connected to SpacetimeDB");
-        AuthToken.SaveToken(token);
-        LocalIdentity = identity;
-
-        // Invoke the OnConnected event
-        OnConnected?.Invoke();
-
-        // Subscribe to the login tables: account and userNotification
-        Debug.Log("SpacetimeManager: Subscribing to login tables...");
-        Conn.SubscriptionBuilder()
-            .OnApplied(HandleSubscriptionApplied)
-            .Subscribe(new string[] {
-                "SELECT * FROM account", "SELECT * FROM  userNotification where identity = '" + LocalIdentity + "'"
-            });
-    }
-
-    void HandleConnectError(Exception ex)
-    {
-        Debug.LogError($"Connection error: {ex}");
-    }
-
-    void HandleDisconnect(DbConnection _conn, Exception ex)
-    {
-
-        Debug.Log("Disconnected.");
-        if (ex != null)
-        {
-            Debug.LogException(ex);
-        }
-    }
-
-    private void HandleSubscriptionApplied(SubscriptionEventContext ctx)
-    {
-        Debug.Log("🟢 Subscription applied!");
-        OnSubscriptionApplied?.Invoke();
-    }
-
-    public bool IsConnected()
-    {
-        return Instance != null && Conn.IsActive;
-    }
-
     public async Task Disconnect()
     {
         // Call the disconnect reducer to handle the disconnection
@@ -128,7 +142,24 @@ public class SpacetimeManager : MonoBehaviour
         Conn.Disconnect();
         Conn = null;
     }
-    
+
+    public void SubscribeToTables(string username)
+    {
+        if (Conn == null || LocalIdentity == null)
+        {
+            Debug.LogError("SpacetimeManager: Cannot subscribe to characters. Connection or identity is null.");
+            return;
+        }
+
+        // Subscribe to the characters table
+        Conn.SubscriptionBuilder()
+            .OnApplied(HandleSubscriptionApplied)
+            .Subscribe(new string[] { "SELECT * FROM character WHERE username = '" + username + "'" });
+        // More tables will be added here
+        // ...    
+        
+    }
+
     void OnApplicationQuit() // This method is called when the application is quitting
     {
         if (IsConnected())

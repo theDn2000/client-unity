@@ -55,12 +55,22 @@ namespace SpacetimeDB.Types
 
             public readonly NameUniqueIndex Name;
 
+            public sealed class UsernameIndex : BTreeIndexBase<string>
+            {
+                protected override string GetKey(Character row) => row.Username;
+
+                public UsernameIndex(CharacterHandle table) : base(table) { }
+            }
+
+            public readonly UsernameIndex Username;
+
             internal CharacterHandle(DbConnection conn) : base(conn)
             {
                 AccountId = new(this);
                 CharacterId = new(this);
                 EntityId = new(this);
                 Name = new(this);
+                Username = new(this);
             }
 
             protected override object GetPrimaryKey(Character row) => row.CharacterId;

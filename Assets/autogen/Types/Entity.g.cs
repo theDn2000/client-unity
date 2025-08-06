@@ -25,10 +25,6 @@ namespace SpacetimeDB.Types
         public float PosZ;
         [DataMember(Name = "rot_y")]
         public float RotY;
-        [DataMember(Name = "health")]
-        public uint Health;
-        [DataMember(Name = "mana")]
-        public uint Mana;
         [DataMember(Name = "entity_type")]
         public string EntityType;
         [DataMember(Name = "created_at")]
@@ -40,8 +36,6 @@ namespace SpacetimeDB.Types
             float PosY,
             float PosZ,
             float RotY,
-            uint Health,
-            uint Mana,
             string EntityType,
             ulong CreatedAt
         )
@@ -51,8 +45,6 @@ namespace SpacetimeDB.Types
             this.PosY = PosY;
             this.PosZ = PosZ;
             this.RotY = RotY;
-            this.Health = Health;
-            this.Mana = Mana;
             this.EntityType = EntityType;
             this.CreatedAt = CreatedAt;
         }

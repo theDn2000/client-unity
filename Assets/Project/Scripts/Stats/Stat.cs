@@ -2,20 +2,36 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Stat : MonoBehaviour
+[System.Serializable]
+public class Stat
 {
-    public float BaseValue { get; set; }
-
+    // --- Private fields ---
+    private float _baseValue;
     private List<StatModifier> _modifiers = new List<StatModifier>();
     private bool _isDirty = true;
     private float _finalValue;
 
+    // --- Constructor ---
     public Stat(float baseValue = 0f)
     {
         BaseValue = baseValue;
     }
 
-    public float Value
+    // --- Public properties ---
+    public float BaseValue // Property to set the base value of the stat (myStat.BaseValue = 10)
+    {
+        get => _baseValue;
+        set
+        {
+            if (_baseValue != value)
+            {
+                _baseValue = value;
+                _isDirty = true;
+            }
+        }
+    }
+
+    public float Value // Property to get the final value of the stat (myStat.Value)
     {
         get
         {
@@ -28,6 +44,7 @@ public class Stat : MonoBehaviour
         }
     }
 
+    // --- Public methods ---
     public void AddModifier(StatModifier modifier)
     {
         _modifiers.Add(modifier);
@@ -46,6 +63,7 @@ public class Stat : MonoBehaviour
         _isDirty = true;
     }
 
+    // --- Private methods ---
     private float CalculateFinalValue()
     {
         float final = BaseValue;
@@ -60,10 +78,10 @@ public class Stat : MonoBehaviour
                 case StatModifierType.Flat:
                     final += modifier.Value;
                     break;
-                case StatModifierType.PercentAdd: // First sum all percent and then apply (1 + (0.1 + 0.2) = 1.3)
+                case StatModifierType.PercentAdd:
                     percentAdd += modifier.Value;
                     break;
-                case StatModifierType.PercentMult: // Apply percent multipliers directly (1 * 1.1 * 1.2 = 1.32)
+                case StatModifierType.PercentMult:
                     final *= 1 + modifier.Value;
                     break;
             }

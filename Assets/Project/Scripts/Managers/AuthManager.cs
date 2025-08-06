@@ -67,22 +67,6 @@ public class AuthManager : MonoBehaviour
                     SpacetimeManager.OnConnected -= OnConnected;
                     throw new Exception("Connection timeout");
                 }
-
-                // Esperar a que se apliquen las suscripciones
-                var subTcs = new TaskCompletionSource<bool>();
-                void OnSubscriptionApplied()
-                {
-                    SpacetimeManager.OnSubscriptionApplied -= OnSubscriptionApplied;
-                    subTcs.SetResult(true);
-                }
-                SpacetimeManager.OnSubscriptionApplied += OnSubscriptionApplied;
-                var subTimeoutTask = Task.Delay(10000);
-                var subCompletedTask = await Task.WhenAny(subTcs.Task, subTimeoutTask);
-                if (subCompletedTask == subTimeoutTask)
-                {
-                    SpacetimeManager.OnSubscriptionApplied -= OnSubscriptionApplied;
-                    throw new Exception("Subscription timeout");
-                }
             }
 
             // Here we trigger the login reducer on the server, using SpacetimeManager's connection
@@ -94,7 +78,7 @@ public class AuthManager : MonoBehaviour
                 // Trigger the login reducer with the provided username and password hash
                 SpacetimeManager.Instance.Conn.Reducers.Login(username, passwordHash);
                 // Automatically, the Reducer_OnLogin method will be called when the login reducer is executed
-                
+
             }
             catch (Exception ex)
             {
@@ -114,7 +98,11 @@ public class AuthManager : MonoBehaviour
     // Register all the callbacks our app will use to respond to database events.
     void RegisterCallbacks(DbConnection conn)
     {
+        // Reducers
         SpacetimeManager.Instance.Conn.Reducers.OnLogin += Reducer_OnLogin; // When the login reducer is called, this method will be executed
+
+        // Handlers
+        SpacetimeManager.OnSubscriptionApplied += OnSubscriptionsReady;
     }
 
     // Callback to be executed when the login reducer is called (to know if the login was successful)
@@ -133,7 +121,25 @@ public class AuthManager : MonoBehaviour
         else
         {
             Debug.Log($"Login successful for {username}");
-            OnLoginSuccess?.Invoke();
+            // Subscribe to tables after a successful login
+            SpacetimeManager.Instance.SubscribeToTables(username);
         }
+    }
+
+    async void OnSubscriptionsReady()
+    {
+        // Unsubscribe to avoid duplicates
+        SpacetimeManager.OnSubscriptionApplied -= OnSubscriptionsReady;
+        // This method is called when all subscriptions are applied and the connection is ready
+        OnLoginSuccess?.Invoke();
+
+        // In this point we need call the CharacterManager to load the characters
+        await CharacterManager.Instance.GetMyCharacters();
+
+        // Limita los fps a 60 para evitar problemas de rendimiento al cambiar de escena
+        Application.targetFrameRate = 60;
+
+        // Change the scene
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Scene_CharacterSelection");   
     }
 }
